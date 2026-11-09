@@ -1,0 +1,16 @@
+/* Default product list. When USE_BACKEND is true, the backend's products.json replaces this. */
+var P = [
+ {id:1,n:"Signature Square Polaroid",t:"pol",w:6,h:6.97,q:"12 prints",f:"Glossy",p:129,d:"Classic square prints with a stylish border."},
+ {id:2,n:"Retro Portrait Polaroid",t:"pol",w:6,h:8.93,q:"10 prints",f:"Glossy",p:149,d:"Retro-style portrait prints."},
+ {id:3,n:"Vintage Border Polaroid",t:"pol",w:6,h:6.97,q:"12 prints",f:"Matte",p:169,d:"Vintage-inspired prints with an elegant border."},
+ {id:4,n:"Personalized Polaroid",t:"pol",w:6,h:8.93,q:"12 prints",f:"Matte",p:149,d:"Prints made from your own photographs."},
+ {id:5,n:"Spotify Polaroid, glossy",t:"sp",w:6,h:9,q:"6 prints",f:"Glossy",p:149,d:"Your photo with your song details, like a music card."},
+ {id:6,n:"Spotify Polaroid, matte",t:"sp",w:6,h:9,q:"6 prints",f:"Matte",p:149,d:"Your photo with your song details, like a music card."},
+ {id:7,n:"Timeless Classic Polaroid, glossy",t:"pol",w:7,h:10,q:"10 prints",f:"Glossy",p:199,d:"The larger classic Polaroid look."},
+ {id:8,n:"Timeless Classic Polaroid, matte",t:"pol",w:7,h:10,q:"10 prints",f:"Matte",p:199,d:"The larger classic Polaroid look."},
+ {id:9,n:"Red Cover Memories Mini Magazine",t:"mag",red:1,w:12,h:10,q:"12 pages",f:"Glossy",p:209,d:"A compact red-cover magazine for your memories."},
+ {id:10,n:"Pocket Photo Magazine",t:"mag",w:5,h:6,q:"12 pages",f:"Glossy",p:129,d:"A tiny personalised photo magazine."},
+ {id:11,n:"A7 Photo Magazine",t:"mag",w:7.4,h:10.5,q:"10 pages",f:"Glossy",p:229,d:"Personalised A7 photo magazine."},
+ {id:12,n:"A6 Photo Magazine",t:"mag",w:10.5,h:14.8,q:"8 pages",f:"Glossy",p:199,d:"Personalised A6 photo magazine."},
+ {id:13,n:"A5 Photo Magazine",t:"mag",w:14.8,h:21,q:"6 pages",f:"Glossy",p:249,d:"Personalised A5 photo magazine."}
+];

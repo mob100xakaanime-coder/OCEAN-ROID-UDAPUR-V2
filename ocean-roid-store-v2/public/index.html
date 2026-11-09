@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ocean Roid: Photo prints and memory gifts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="logo" href="#top">Ocean<span>Roid</span></a>
+  <nav class="nav"><a class="l" href="#how">How it works</a><a class="l" href="#shop">Shop</a>
+  <button class="cartbtn" id="open" aria-label="Open cart">Cart<b id="count">0</b></button></nav>
+</div></header>
+
+<main id="top">
+<div class="band"><div class="wrap hero">
+  <div>
+    <h1>Turn the photos on your phone into memories you can hold.</h1>
+    <p>Polaroid-style prints, Spotify song prints and mini photo magazines, made by hand in Udaipur from your own photographs.</p>
+    <a class="cta" href="#shop">Shop prints</a><a class="cta alt" href="#how">How it works</a>
+  </div>
+  <div class="fan" aria-hidden="true">
+    <div class="pol" style="aspect-ratio:6/8.93"><div class="ph"></div><div class="cap"></div></div>
+    <div class="pol sp" style="aspect-ratio:6/9"><div class="ph"></div><div class="cap"><i></i><i></i><i></i></div></div>
+    <div class="pol" style="aspect-ratio:6/6.97"><div class="ph"></div><div class="cap"></div></div>
+  </div>
+</div></div>
+
+<div class="offer"><div class="wrap"><p>Gifting season is here. Order early for Bhai Dooj, wedding season, Christmas and New Year gifts.</p><a class="cta" href="#shop">Shop the collection</a></div></div>
+
+<section class="sec" id="how"><div class="wrap">
+  <h2>Ordering takes one WhatsApp message</h2>
+  <div class="steps">
+    <div class="step"><h3>Pick your prints</h3><p>Add Polaroids or a photo magazine to your cart and fill in your delivery details.</p></div>
+    <div class="step"><h3>Send your photos</h3><p>Your order opens in WhatsApp. Send us the photos you want printed, and the song name for Spotify prints.</p></div>
+    <div class="step"><h3>Pay and receive</h3><p>Pay by UPI QR once we confirm. We print, pack and deliver, and confirm the delivery time and charge for your city.</p></div>
+  </div>
+</div></section>
+
+<section class="sec" id="shop"><div class="wrap">
+  <h2>Prints and photo magazines</h2>
+  <p class="sub">Every product is printed on 200 GSM paper. Pick a finish, send your photos, and we do the rest.</p>
+  <div class="tabs" role="group" aria-label="Filter products">
+    <button class="tab" data-f="all" aria-pressed="true">All</button>
+    <button class="tab" data-f="pol" aria-pressed="false">Polaroids</button>
+    <button class="tab" data-f="mag" aria-pressed="false">Photo magazines</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section class="sec"><div class="wrap why">
+  <div><h3>Made in-house</h3><p>Designed, printed and packed by two friends in Udaipur.</p></div>
+  <div><h3>Your photos, your story</h3><p>Every order is personalised with your own pictures. Nothing is stock.</p></div>
+  <div><h3>Made for gifting</h3><p>Birthdays, anniversaries, trips and just-because moments.</p></div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div>Ocean Roid, Udaipur, Rajasthan<br>Delivery in Udaipur by us. Other cities by courier, charge confirmed on WhatsApp.</div>
+  <div><a id="wa2" href="#" target="_blank" rel="noopener">Chat on WhatsApp</a><br><a id="ig" href="#" target="_blank" rel="noopener">Instagram</a></div>
+</div></footer>
+
+<div class="ov" id="ov"></div>
+<aside class="drawer" id="drawer" aria-label="Your cart" aria-hidden="true">
+  <div class="dh"><h2>Your cart</h2><button class="x" id="close" aria-label="Close cart">&times;</button></div>
+  <div class="db" id="db"></div>
+</aside>
+
+<script src="js/config.js"></script>
+<script src="js/products.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

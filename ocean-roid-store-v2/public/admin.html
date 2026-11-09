@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ocean Roid Admin</title>
+<style>
+:root{--bg:#FFF8FA;--ink:#171217;--muted:#665B61;--line:#F1D5DF;--pink:#EFA7C0;--soft:#FCE5ED;--hero:#F8C9D9;
+--font:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--font)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:6px}
+.top{background:var(--ink);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.top h1{margin:0;font-size:18px}
+.top .acts{display:flex;gap:8px}
+.btn{background:#fff;color:var(--ink);border:0;border-radius:999px;padding:8px 16px;font-weight:600}
+.btn.dark{background:var(--ink);color:#fff}
+.login{max-width:380px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+.login h2{margin:0 0 4px;font-size:22px}
+.login p{margin:0 0 16px;color:var(--muted)}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+input,select{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.login .btn{width:100%;margin-top:14px;padding:12px;background:var(--ink);color:#fff}
+.err{color:#b3261e;font-size:14px;min-height:20px;margin-top:10px}
+.wrap{max-width:1000px;margin:0 auto;padding:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font-size:22px}
+.stat span{color:var(--muted);font-size:13px}
+.tools{display:grid;grid-template-columns:200px 1fr;gap:10px;margin-bottom:16px}
+.order{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.oh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.oid{font-weight:700}
+.date{color:var(--muted);font-size:13px}
+.badge{display:inline-block;background:var(--pink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;text-transform:capitalize}
+.badge.paid,.badge.confirmed{background:var(--hero)}
+.badge.printing,.badge.shipped{background:var(--soft);border:1px solid var(--pink)}
+.badge.delivered{background:#d7f0dc}
+.badge.cancelled{background:#e6e1e3;color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cols h3{margin:0 0 4px;font-size:13px;color:var(--muted);font-weight:600}
+.items div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:3px 0}
+.total{font-weight:700;display:flex;justify-content:space-between;padding-top:6px}
+.foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.foot select{width:auto}
+.wa{background:#1f9d57;color:#fff;text-decoration:none;border-radius:999px;padding:8px 16px;font-weight:600}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.hide{display:none}
+@media (max-width:640px){.cols{grid-template-columns:1fr}.tools{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login">
+  <h2>Admin login</h2>
+  <p>Ocean Roid order dashboard</p>
+  <label for="pw">Admin password</label>
+  <input id="pw" type="password" autocomplete="current-password">
+  <button class="btn" id="loginBtn">Login</button>
+  <div class="err" id="loginErr" role="alert"></div>
+</div>
+
+<div id="appView" class="hide">
+  <div class="top">
+    <h1>Ocean Roid Orders</h1>
+    <div class="acts"><button class="btn" id="refresh">Refresh</button><button class="btn" id="logout">Logout</button></div>
+  </div>
+  <div class="wrap">
+    <div class="stats" id="stats"></div>
+    <div class="tools">
+      <select id="fs" aria-label="Filter by status"></select>
+      <input id="q" placeholder="Search name, phone, city or order ID" aria-label="Search orders">
+    </div>
+    <div class="err" id="appErr" role="alert"></div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<script>
+var STATUSES = ["new","confirmed","paid","printing","shipped","delivered","cancelled"];
+var KEY = "", ORDERS = [];
+var $ = function(s){return document.querySelector(s)};
+function esc(t){var d=document.createElement("div");d.textContent=t==null?"":String(t);return d.innerHTML}
+function rs(n){return "\u20b9"+Number(n||0).toLocaleString("en-IN")}
+
+function api(method, path, body){
+  var opt = {method:method, headers:{"x-admin-key":KEY}};
+  if(body){opt.headers["Content-Type"]="application/json";opt.body=JSON.stringify(body)}
+  return fetch(path,opt).then(function(r){
+    return r.json().catch(function(){return {}}).then(function(j){
+      if(!r.ok) throw new Error(j.error||("Error "+r.status));
+      return j;
+    });
+  });
+}
+
+function show(loggedIn){
+  $("#loginView").classList.toggle("hide",loggedIn);
+  $("#appView").classList.toggle("hide",!loggedIn);
+}
+function login(key){
+  KEY = key;
+  $("#loginErr").textContent = "";
+  return api("GET","/api/orders").then(function(list){
+    ORDERS = list;
+    try{sessionStorage.setItem("or_admin",KEY)}catch(e){}
+    show(true);render();
+  }).catch(function(e){
+    KEY="";
+    try{sessionStorage.removeItem("or_admin")}catch(x){}
+    show(false);
+    $("#loginErr").textContent = e.message || "Could not log in";
+  });
+}
+function load(){
+  $("#appErr").textContent="";
+  return api("GET","/api/orders").then(function(list){ORDERS=list;render()})
+   .catch(function(e){$("#appErr").textContent=e.message;if(/password|Unauthorized/i.test(e.message))logout()});
+}
+function logout(){
+  KEY="";ORDERS=[];
+  try{sessionStorage.removeItem("or_admin")}catch(e){}
+  $("#pw").value="";show(false);
+}
+
+function render(){
+  var live = ORDERS.filter(function(o){return o.status!=="cancelled"});
+  var count = function(a){return ORDERS.filter(function(o){return a.indexOf(o.status)>-1}).length};
+  var value = live.reduce(function(s,o){return s+(o.itemsTotal||0)},0);
+  $("#stats").innerHTML =
+    '<div class="stat"><b>'+ORDERS.length+'</b><span>Total orders</span></div>'+
+    '<div class="stat"><b>'+count(["new"])+'</b><span>New</span></div>'+
+    '<div class="stat"><b>'+count(["confirmed","paid","printing","shipped"])+'</b><span>In progress</span></div>'+
+    '<div class="stat"><b>'+count(["delivered"])+'</b><span>Delivered</span></div>'+
+    '<div class="stat"><b>'+rs(value)+'</b><span>Items value (no cancelled, no delivery charge)</span></div>';
+
+  var fs = $("#fs"), cur = fs.value || "all";
+  fs.innerHTML = '<option value="all">All statuses</option>'+STATUSES.map(function(s){return '<option value="'+s+'">'+s+'</option>'}).join("");
+  fs.value = cur;
+
+  var q = $("#q").value.trim().toLowerCase();
+  var rows = ORDERS.slice().reverse().filter(function(o){
+    if(cur!=="all" && o.status!==cur) return false;
+    if(!q) return true;
+    var c=o.customer||{};
+    return (o.id+" "+c.name+" "+c.phone+" "+c.city).toLowerCase().indexOf(q)>-1;
+  });
+  if(!rows.length){$("#list").innerHTML='<div class="empty">No orders to show.</div>';return}
+
+  $("#list").innerHTML = rows.map(function(o){
+    var c=o.customer||{};
+    var digits=String(c.phone||"").replace(/\D/g,"");
+    if(digits.length===10) digits="91"+digits;
+    var items=(o.items||[]).map(function(i){
+      return '<div><span>'+esc(i.name)+' ('+esc(i.pack)+', '+esc(i.finish)+') x '+esc(i.qty)+'</span><span>'+rs(i.lineTotal)+'</span></div>';
+    }).join("");
+    var opts=STATUSES.map(function(s){return '<option value="'+s+'"'+(s===o.status?' selected':'')+'>'+s+'</option>'}).join("");
+    return '<div class="order">'+
+      '<div class="oh"><div><span class="oid">'+esc(o.id)+'</span> <span class="badge '+esc(o.status)+'">'+esc(o.status)+'</span></div>'+
+      '<span class="date">'+esc(new Date(o.createdAt).toLocaleString("en-IN"))+'</span></div>'+
+      '<div class="cols"><div><h3>Customer</h3><div><b>'+esc(c.name)+'</b></div><div>'+esc(c.phone)+'</div><div>'+esc(c.city)+'</div><div>'+esc(c.address)+'</div>'+
+      (c.note?'<div><i>Note: '+esc(c.note)+'</i></div>':'')+'</div>'+
+      '<div><h3>Items</h3><div class="items">'+items+'</div><div class="total"><span>Items total</span><span>'+rs(o.itemsTotal)+'</span></div></div></div>'+
+      '<div class="foot"><label for="st-'+esc(o.id)+'" style="margin:0">Status</label>'+
+      '<select id="st-'+esc(o.id)+'" data-id="'+esc(o.id)+'">'+opts+'</select>'+
+      (digits?'<a class="wa" target="_blank" rel="noopener" href="https://wa.me/'+digits+'">Message on WhatsApp</a>':'')+'</div></div>';
+  }).join("");
+}
+
+document.addEventListener("change",function(e){
+  var t=e.target;
+  if(t.matches("select[data-id]")){
+    var id=t.dataset.id, st=t.value;
+    $("#appErr").textContent="";
+    api("PATCH","/api/orders/"+encodeURIComponent(id),{status:st}).then(function(o){
+      ORDERS=ORDERS.map(function(x){return x.id===id?o:x});render();
+    }).catch(function(err){$("#appErr").textContent=err.message;load()});
+  } else if(t.id==="fs") render();
+});
+$("#q").addEventListener("input",render);
+$("#loginBtn").addEventListener("click",function(){login($("#pw").value)});
+$("#pw").addEventListener("keydown",function(e){if(e.key==="Enter")login($("#pw").value)});
+$("#refresh").addEventListener("click",load);
+$("#logout").addEventListener("click",logout);
+setInterval(function(){if(KEY)load()},60000);
+
+try{var k=sessionStorage.getItem("or_admin");if(k)login(k)}catch(e){}
+</script>
+</body>
+</html>
